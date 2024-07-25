@@ -46,7 +46,7 @@ class _TaskListScreenState extends ConsumerState<TaskListScreen> {
                   title: Text(task.title),
                   subtitle: Text(task.description),
                   trailing: Checkbox(
-                    value: task.isComplete,
+                    value: task.isComplete == 1,
                     onChanged: (value) {
                       ref.read(taskProvider.notifier).markTaskComplete(task.id);
                     },

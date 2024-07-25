@@ -18,6 +18,8 @@ class FirestoreService {
   }
 
   Future<void> addTask(TaskModel task) async {
+    String id = _db.collection('tasks').doc().id;
+    task.id = id;
     await _db.collection('tasks').add(task.toMap());
   }
 

@@ -50,7 +50,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                   subtitle: Text(task.description),
                   trailing: IconButton(
                     icon: Icon(Icons.check,
-                        color: task.isComplete ? Colors.green : null),
+                        color: task.isComplete == 1 ? Colors.green : null),
                     onPressed: () {
                       ref.read(taskProvider.notifier).markTaskComplete(task.id);
                     },

@@ -6,6 +6,9 @@ import '../model/task_model.dart';
 import '../pod/task_pod.dart';
 
 class AddTaskScreen extends ConsumerStatefulWidget {
+  final TaskModel? task;
+
+  AddTaskScreen({this.task});
   @override
   _AddTaskScreenState createState() => _AddTaskScreenState();
 }
@@ -40,11 +43,22 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
         title: _titleController.text,
         description: _descriptionController.text,
         dueDate: _dueDate!,
-        isComplete: false,
-        // priority: _priority,
+        isComplete: 0,
+        priority: _priority,
       );
       ref.read(taskProvider.notifier).addTask(newTask);
       Navigator.pop(context);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.task != null) {
+      _titleController.text = widget.task!.title;
+      _descriptionController.text = widget.task!.description;
+      _dueDate = widget.task!.dueDate;
+      _priority = widget.task!.priority!;
     }
   }
 

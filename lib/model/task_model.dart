@@ -6,7 +6,8 @@ class TaskModel extends Equatable {
   String title;
   String description;
   DateTime? dueDate;
-  bool isComplete;
+  int isComplete;
+  int? priority;
 
   TaskModel({
     required this.id,
@@ -15,6 +16,7 @@ class TaskModel extends Equatable {
     required this.description,
     this.dueDate,
     required this.isComplete,
+    required this.priority,
   });
 
   TaskModel copyWith({
@@ -23,7 +25,8 @@ class TaskModel extends Equatable {
     String? title,
     String? description,
     DateTime? dueDate,
-    bool? isComplete,
+    int? isComplete,
+    int? priority,
   }) {
     return TaskModel(
       id: id ?? this.id,
@@ -32,17 +35,22 @@ class TaskModel extends Equatable {
       description: description ?? this.description,
       dueDate: dueDate ?? this.dueDate,
       isComplete: isComplete ?? this.isComplete,
+      priority: priority ?? this.priority,
     );
   }
 
   factory TaskModel.fromMap(Map<String, dynamic> json) => TaskModel(
-        id: json['id'] ?? "",
-        uid: json['uid'] ?? "",
-        title: json['title'] ?? "",
-        description: json['description'] ?? "",
-        dueDate: DateTime.parse(json['dueDate']),
-        isComplete: json['isComplete'] == 1,
-      );
+      id: json['id'] ?? "",
+      uid: json['uid'] ?? "",
+      title: json['title'] ?? "",
+      description: json['description'] ?? "",
+      dueDate: DateTime.parse(json['dueDate']),
+      isComplete: json['isComplete'] is bool
+          ? json['isComplete']
+              ? 0
+              : 1
+          : json['isComplete'],
+      priority: json['priority']);
 
   Map<String, dynamic> toMap() => {
         'id': id,
@@ -51,6 +59,7 @@ class TaskModel extends Equatable {
         'description': description,
         'dueDate': dueDate?.toIso8601String(),
         'isComplete': isComplete,
+        'priority': priority
       };
 
   @override

@@ -22,8 +22,8 @@ class TaskNotifier extends StateNotifier<List<TaskModel>> {
   }
 
   Future<void> addTask(TaskModel task) async {
-    await _dbHelper.insertTask(task);
     await _firestoreService.addTask(task);
+    await _dbHelper.insertTask(task);
     state = [...state, task];
   }
 
@@ -44,7 +44,7 @@ class TaskNotifier extends StateNotifier<List<TaskModel>> {
 
   Future<void> markTaskComplete(String id) async {
     final task = state.firstWhere((task) => task.id == id);
-    task.isComplete = !task.isComplete;
+    task.isComplete = task.isComplete;
     await updateTask(task);
   }
 }
