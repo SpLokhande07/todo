@@ -45,6 +45,8 @@ dependencies:
   image_picker:
   firebase_storage:
   flutter_localization:
+  fluttertoast:
+  flutter_screenutil:
 
 dev_dependencies:
   flutter_test:

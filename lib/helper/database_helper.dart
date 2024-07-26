@@ -1,3 +1,4 @@
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../model/task_model.dart';
@@ -62,5 +63,14 @@ class DatabaseHelper {
   Future<void> deleteTask(String id) async {
     final db = await database;
     await db.delete('tasks', where: 'id = ?', whereArgs: [id]);
+  }
+
+  // Method to clear the database
+  Future<void> clearDatabase() async {
+    final db = await database;
+    await db.delete('tasks');
+    await db.close();
+    Fluttertoast.showToast(msg: "LocalDB clear");
+    print(db.isOpen);
   }
 }

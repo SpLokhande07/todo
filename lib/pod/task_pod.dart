@@ -18,7 +18,9 @@ class TaskNotifier extends StateNotifier<List<TaskModel>> {
 
   Future<void> _loadTasks() async {
     await _syncService.syncTasks();
-    state = await _dbHelper.getTasks();
+    // _dbHelper.clearDatabase();
+    List<TaskModel> list = await _dbHelper.getTasks();
+    state = list;
   }
 
   Future<void> addTask(TaskModel task) async {
@@ -44,7 +46,12 @@ class TaskNotifier extends StateNotifier<List<TaskModel>> {
 
   Future<void> markTaskComplete(String id) async {
     final task = state.firstWhere((task) => task.id == id);
-    task.isComplete = task.isComplete;
+    task.isComplete = task.isComplete == 0 ? 1 : 0;
     await updateTask(task);
+  }
+
+  Future<void> clearTask() async {
+    await _dbHelper.clearDatabase();
+    await _loadTasks;
   }
 }

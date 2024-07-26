@@ -19,16 +19,16 @@ class SyncService {
 
     // Sync local tasks to remote
     for (TaskModel task in localTasks) {
-      // if (!(remoteTasks.contains(task))) {
-      await _firestoreService.addTask(task);
-      // }
+      if (remoteTasks.indexWhere((t) => t.id == task.id) >= 0) {
+        await _firestoreService.addTask(task);
+      }
     }
 
     // Sync remote tasks to local
     for (TaskModel task in remoteTasks) {
-      // if (!(localTasks.contains(task))) {
-      await _dbHelper.insertTask(task);
-      // }
+      if (localTasks.indexWhere((t) => t.id == task.id) >= 0) {
+        await _dbHelper.insertTask(task);
+      }
     }
   }
 }

@@ -35,7 +35,7 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
     }
   }
 
-  _addTask(WidgetRef ref) {
+  _addTask(WidgetRef ref) async {
     if (_formKey.currentState!.validate() && _dueDate != null) {
       final newTask = TaskModel(
         uid: auth.currentUser!.uid,
@@ -46,8 +46,9 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
         isComplete: 0,
         priority: _priority,
       );
-      ref.read(taskProvider.notifier).addTask(newTask);
-      Navigator.pop(context);
+      await ref.read(taskProvider.notifier).addTask(newTask).then((val) {
+        Navigator.pop(context);
+      });
     }
   }
 

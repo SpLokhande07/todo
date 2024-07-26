@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../helper/database_helper.dart';
 import '../model/auth_model.dart';
 
 class AuthNotifier extends StateNotifier<AuthModel> {
@@ -13,6 +14,7 @@ class AuthNotifier extends StateNotifier<AuthModel> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final DatabaseHelper dbHelper = DatabaseHelper();
 
   Future<void> _initialize() async {
     _auth.authStateChanges().listen((user) {
@@ -115,6 +117,7 @@ class AuthNotifier extends StateNotifier<AuthModel> {
   }
 
   Future<void> logout() async {
+    await dbHelper.clearDatabase();
     await _auth.signOut();
     await _googleSignIn.signOut();
     state = state.copyWith(user: null);

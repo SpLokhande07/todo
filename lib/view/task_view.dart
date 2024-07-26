@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:todo_noorisys/helper/database_helper.dart';
+import 'package:todo_noorisys/widgets/task_tile.dart';
 
 import '../helper/connection_helper.dart';
 import '../pod/task_pod.dart';
@@ -14,17 +17,13 @@ class TaskListScreen extends ConsumerStatefulWidget {
 }
 
 class _TaskListScreenState extends ConsumerState<TaskListScreen> {
-  late ConnectionHelper _connectionHelper;
-
   @override
   void initState() {
     super.initState();
-    _connectionHelper = ConnectionHelper(context)..initialize();
   }
 
   @override
   void dispose() {
-    _connectionHelper.dispose();
     super.dispose();
   }
 
@@ -40,32 +39,37 @@ class _TaskListScreenState extends ConsumerState<TaskListScreen> {
         itemCount: taskList.length,
         itemBuilder: (context, index) {
           final task = taskList[index];
-          bool showDate = task.dueDate!.compareTo(DateTime.now()) <= 0;
+          bool showDate = task.dueDate!.compareTo(DateTime.now()) >= 0 ||
+              task.dueDate!.isAtSameMomentAs(DateTime(DateTime.now().year,
+                  DateTime.now().month, DateTime.now().day));
+          print("##############################");
+          print("${task.dueDate!}.compareTo(${DateTime(
+            DateTime.now().year,
+            DateTime.now().month,
+            DateTime.now().day,
+          )}): ${task.dueDate!.compareTo(DateTime.now())}");
+          print(
+              "${task.dueDate!.isAtSameMomentAs(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day))}");
+          print("##############################");
+
           return showDate
-              ? ListTile(
-                  title: Text(task.title),
-                  subtitle: Text(task.description),
-                  trailing: Checkbox(
-                    value: task.isComplete == 1,
-                    onChanged: (value) {
-                      ref.read(taskProvider.notifier).markTaskComplete(task.id);
-                    },
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AddTaskScreen(),
-                      ),
-                    );
+              ? TaskTile(
+                  task: task,
+                  deleteTask: () async {
+                    await ref.read(taskProvider.notifier).deleteTask(task.id);
+                  },
+                  markTaskStatusChange: () async {
+                    await ref
+                        .read(taskProvider.notifier)
+                        .markTaskComplete(task.id);
                   },
                 )
               : const SizedBox();
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () {
+      floatingActionButton: fab(
+        icon: Icons.add,
+        onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -74,6 +78,13 @@ class _TaskListScreenState extends ConsumerState<TaskListScreen> {
           );
         },
       ),
+    );
+  }
+
+  Widget fab({required IconData icon, required Function() onTap}) {
+    return FloatingActionButton(
+      child: Icon(icon),
+      onPressed: onTap,
     );
   }
 }

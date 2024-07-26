@@ -1,45 +1,58 @@
 import 'dart:async';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ConnectionHelper {
   final BuildContext context;
   final Connectivity _connectivity = Connectivity();
   StreamSubscription<List<ConnectivityResult>>? _subscription;
-  ConnectivityResult? _previousResult;
+  bool? previousResult;
+
+  final StreamController<bool> _connectionController =
+      StreamController<bool>.broadcast();
+  Stream<bool> get connectionStream => _connectionController.stream;
 
   ConnectionHelper(this.context);
 
   void initialize() {
     _subscription = _connectivity.onConnectivityChanged
         .listen((List<ConnectivityResult> result) {
-      _showSnackbar(result);
+      _showToast(connectionChecker(result));
+      _connectionController.add(connectionChecker(result));
     });
   }
 
-  void _showSnackbar(List<ConnectivityResult> result) {
-    if (result.contains(_previousResult)) {
-      if (result.contains(ConnectivityResult.none)) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('You have lost internet connection'),
-            backgroundColor: Colors.red,
-          ),
+  void _showToast(bool result) {
+    if (result != previousResult) {
+      if (!result) {
+        Fluttertoast.showToast(
+          msg: 'You have lost internet connection',
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('You are back online'),
-            backgroundColor: Colors.green,
-          ),
+        Fluttertoast.showToast(
+          msg: 'You are back online',
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
         );
       }
-      _previousResult = result[0];
+      previousResult = result;
+    }
+  }
+
+  bool connectionChecker(List<ConnectivityResult> result) {
+    if (result.contains(ConnectivityResult.mobile) ||
+        result.contains(ConnectivityResult.wifi)) {
+      return true;
+    } else {
+      return false;
     }
   }
 
   void dispose() {
     _subscription?.cancel();
+    _connectionController.close(); // Close the stream controller when done
   }
 }

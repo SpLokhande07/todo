@@ -26,13 +26,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile'),
+        title: const Text('Profile'),
         actions: [
           IconButton(
-            icon: Icon(Icons.logout),
+            icon: const Icon(Icons.logout),
             onPressed: () async {
-              await FirebaseAuth.instance.signOut();
-              Navigator.pushReplacementNamed(context, '/login');
+              await FirebaseAuth.instance.signOut().then((val) {
+                Navigator.pushReplacementNamed(context, '/login');
+              });
             },
           ),
         ],
@@ -40,7 +41,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: profileState.isLoading
-            ? Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator())
             : Form(
                 key: _formKey,
                 child: Column(
@@ -54,13 +55,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             ? NetworkImage(profileState.profileImageUrl!)
                             : null,
                         child: profileState.profileImageUrl == null
-                            ? Icon(Icons.add_a_photo)
+                            ? const Icon(Icons.add_a_photo)
                             : null,
                       ),
                     ),
                     TextFormField(
                       controller: _nameController..text = profileState.name,
-                      decoration: InputDecoration(labelText: 'Name'),
+                      decoration: const InputDecoration(labelText: 'Name'),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your name';
@@ -70,7 +71,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                     TextFormField(
                       controller: _dobController..text = profileState.dob,
-                      decoration: InputDecoration(labelText: 'Date of Birth'),
+                      decoration:
+                          const InputDecoration(labelText: 'Date of Birth'),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your date of birth';
@@ -78,7 +80,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         return null;
                       },
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
@@ -88,14 +90,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               );
                         }
                       },
-                      child: Text('Update Profile'),
+                      child: const Text('Update Profile'),
                     ),
                     if (profileState.errorMessage != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 16.0),
                         child: Text(
                           profileState.errorMessage!,
-                          style: TextStyle(color: Colors.red),
+                          style: const TextStyle(color: Colors.red),
                         ),
                       ),
                   ],

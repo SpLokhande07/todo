@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../pod/task_pod.dart';
+import '../widgets/task_tile.dart';
 import 'add_task_view.dart';
 
 class CalendarScreen extends ConsumerStatefulWidget {
@@ -45,16 +46,16 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
               itemCount: tasksForSelectedDay.length,
               itemBuilder: (context, index) {
                 final task = tasksForSelectedDay[index];
-                return ListTile(
-                  title: Text(task.title),
-                  subtitle: Text(task.description),
-                  trailing: IconButton(
-                    icon: Icon(Icons.check,
-                        color: task.isComplete == 1 ? Colors.green : null),
-                    onPressed: () {
-                      ref.read(taskProvider.notifier).markTaskComplete(task.id);
-                    },
-                  ),
+                return TaskTile(
+                  task: task,
+                  deleteTask: () async {
+                    await ref.read(taskProvider.notifier).deleteTask(task.id);
+                  },
+                  markTaskStatusChange: () async {
+                    await ref
+                        .read(taskProvider.notifier)
+                        .markTaskComplete(task.id);
+                  },
                 );
               },
             ),
