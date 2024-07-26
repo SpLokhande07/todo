@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:todo_noorisys/pod/auth_pod.dart';
 import '../pod/profile_pod.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -18,6 +19,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     super.initState();
     final profileNotifier = ref.read(profileProvider.notifier);
     profileNotifier.loadProfile();
+    _dobController.text = ref.read(profileProvider).dob;
   }
 
   @override
@@ -31,9 +33,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
-              await FirebaseAuth.instance.signOut().then((val) {
-                Navigator.pushReplacementNamed(context, '/login');
-              });
+              ref.read(authProvider.notifier).logout();
             },
           ),
         ],
@@ -70,7 +70,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       },
                     ),
                     TextFormField(
-                      controller: _dobController..text = profileState.dob,
+                      controller: _dobController,
                       decoration:
                           const InputDecoration(labelText: 'Date of Birth'),
                       validator: (value) {
@@ -78,6 +78,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           return 'Please enter your date of birth';
                         }
                         return null;
+                      },
+                      readOnly: true, // Make the field read-only
+                      onTap: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime(2101),
+                        );
+                        if (pickedDate != null) {
+                          setState(() {
+                            _dobController.text = "${pickedDate.toLocal()}"
+                                .split(' ')[0]; // Format the date as needed
+                          });
+                        }
                       },
                     ),
                     const SizedBox(height: 20),

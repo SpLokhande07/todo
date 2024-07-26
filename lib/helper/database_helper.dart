@@ -70,7 +70,5 @@ class DatabaseHelper {
     final db = await database;
     await db.delete('tasks');
     await db.close();
-    Fluttertoast.showToast(msg: "LocalDB clear");
-    print(db.isOpen);
   }
 }

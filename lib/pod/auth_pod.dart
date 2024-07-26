@@ -120,6 +120,7 @@ class AuthNotifier extends StateNotifier<AuthModel> {
     await dbHelper.clearDatabase();
     await _auth.signOut();
     await _googleSignIn.signOut();
+    await FirebaseAuth.instance.signOut();
     state = state.copyWith(user: null);
   }
 }
