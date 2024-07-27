@@ -103,3 +103,4 @@ android/app/proguard-rules.pro
 android/key.properties
 android/ephemeral/
 /lib/constants/
+.DS_Store
