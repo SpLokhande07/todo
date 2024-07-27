@@ -33,56 +33,63 @@ class _TaskListScreenState extends ConsumerState<TaskListScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Todo List'),
+        title: const Text('Todo List'),
       ),
-      body: taskList.length == 0
-          ? Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Center(
-                  child: Text(
-                "Add Todo by tapping \"+\" icon",
-                maxLines: 2,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 32.sp,
-                  color: Colors.grey.shade400,
-                ),
-              )),
+      body: taskList == null
+          ? const Center(
+              child: CircularProgressIndicator(),
             )
-          : ListView.builder(
-              itemCount: taskList.length,
-              itemBuilder: (context, index) {
-                final task = taskList[index];
-                bool showDate = task.dueDate!.compareTo(DateTime.now()) >= 0 ||
-                    task.dueDate!.isAtSameMomentAs(DateTime(DateTime.now().year,
-                        DateTime.now().month, DateTime.now().day));
-                print("##############################");
-                print("${task.dueDate!}.compareTo(${DateTime(
-                  DateTime.now().year,
-                  DateTime.now().month,
-                  DateTime.now().day,
-                )}): ${task.dueDate!.compareTo(DateTime.now())}");
-                print(
-                    "${task.dueDate!.isAtSameMomentAs(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day))}");
-                print("##############################");
+          : taskList.isEmpty
+              ? Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Center(
+                      child: Text(
+                    "Add Todo by tapping \"+\" icon",
+                    maxLines: 2,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 32.sp,
+                      color: Colors.grey.shade400,
+                    ),
+                  )),
+                )
+              : ListView.builder(
+                  itemCount: taskList.length,
+                  itemBuilder: (context, index) {
+                    final task = taskList[index];
+                    bool showDate =
+                        task.dueDate!.compareTo(DateTime.now()) >= 0 ||
+                            task.dueDate!.isAtSameMomentAs(DateTime(
+                                DateTime.now().year,
+                                DateTime.now().month,
+                                DateTime.now().day));
+                    print("##############################");
+                    print("${task.dueDate!}.compareTo(${DateTime(
+                      DateTime.now().year,
+                      DateTime.now().month,
+                      DateTime.now().day,
+                    )}): ${task.dueDate!.compareTo(DateTime.now())}");
+                    print(
+                        "${task.dueDate!.isAtSameMomentAs(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day))}");
+                    print("##############################");
 
-                return showDate
-                    ? TaskTile(
-                        task: task,
-                        deleteTask: () async {
-                          await ref
-                              .read(taskProvider.notifier)
-                              .deleteTask(task.id);
-                        },
-                        markTaskStatusChange: () async {
-                          await ref
-                              .read(taskProvider.notifier)
-                              .markTaskComplete(task.id);
-                        },
-                      )
-                    : const SizedBox();
-              },
-            ),
+                    return showDate
+                        ? TaskTile(
+                            task: task,
+                            deleteTask: () async {
+                              await ref
+                                  .read(taskProvider.notifier)
+                                  .deleteTask(task.id);
+                            },
+                            markTaskStatusChange: () async {
+                              await ref
+                                  .read(taskProvider.notifier)
+                                  .markTaskComplete(task.id);
+                            },
+                          )
+                        : const SizedBox();
+                  },
+                ),
       floatingActionButton: fab(
         icon: Icons.add,
         onTap: () {

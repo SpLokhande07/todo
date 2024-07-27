@@ -33,7 +33,7 @@ class _TaskTileState extends State<TaskTile> {
           children: [
             Checkbox(
               value: widget.task.isComplete == 1,
-              onChanged: (val) => widget.markTaskStatusChange,
+              onChanged: (val) => widget.markTaskStatusChange(),
             ),
             InkWell(
               onTap: () => widget.deleteTask(),
