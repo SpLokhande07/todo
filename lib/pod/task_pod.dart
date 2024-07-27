@@ -4,10 +4,10 @@ import '../model/task_model.dart';
 import '../service/firestore_service.dart';
 import '../service/sync_service.dart';
 
-final taskProvider = StateNotifierProvider<TaskNotifier, List<TaskModel>>(
+final taskProvider = StateNotifierProvider<TaskNotifier, List<TaskModel>?>(
     (ref) => TaskNotifier());
 
-class TaskNotifier extends StateNotifier<List<TaskModel>> {
+class TaskNotifier extends StateNotifier<List<TaskModel>?> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
   final FirestoreService _firestoreService = FirestoreService();
   final SyncService _syncService = SyncService();
@@ -18,7 +18,6 @@ class TaskNotifier extends StateNotifier<List<TaskModel>> {
 
   Future<void> _loadTasks() async {
     await _syncService.syncTasks();
-    // _dbHelper.clearDatabase();
     List<TaskModel> list = await _dbHelper.getTasks();
     state = list;
   }
@@ -26,14 +25,14 @@ class TaskNotifier extends StateNotifier<List<TaskModel>> {
   Future<void> addTask(TaskModel task) async {
     await _firestoreService.addTask(task);
     await _dbHelper.insertTask(task);
-    state = [...state, task];
+    state = [...state!, task];
   }
 
   Future<void> updateTask(TaskModel task) async {
     await _dbHelper.updateTask(task);
     await _firestoreService.updateTask(task);
     state = [
-      for (final t in state)
+      for (final t in state!)
         if (t.id == task.id) task else t
     ];
   }
@@ -41,11 +40,11 @@ class TaskNotifier extends StateNotifier<List<TaskModel>> {
   Future<void> deleteTask(String id) async {
     await _dbHelper.deleteTask(id);
     await _firestoreService.deleteTask(id);
-    state = state.where((task) => task.id != id).toList();
+    state = state!.where((task) => task.id != id).toList();
   }
 
   Future<void> markTaskComplete(String id) async {
-    final task = state.firstWhere((task) => task.id == id);
+    final task = state!.firstWhere((task) => task.id == id);
     task.isComplete = task.isComplete == 0 ? 1 : 0;
     await updateTask(task);
   }

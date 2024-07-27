@@ -17,7 +17,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   @override
   Widget build(BuildContext context) {
     final taskList = ref.watch(taskProvider);
-    final tasksForSelectedDay = taskList
+    final tasksForSelectedDay = taskList!
         .where((task) => isSameDay(task.dueDate, _selectedDay))
         .toList();
 
