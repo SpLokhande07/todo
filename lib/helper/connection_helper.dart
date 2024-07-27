@@ -24,7 +24,7 @@ class ConnectionHelper {
   }
 
   void _showToast(bool result) {
-    if (result != previousResult) {
+    if (result != previousResult && previousResult != null) {
       if (!result) {
         Fluttertoast.showToast(
           msg: 'You have lost internet connection',
@@ -38,6 +38,9 @@ class ConnectionHelper {
           textColor: Colors.white,
         );
       }
+      previousResult = result;
+    }
+    if (previousResult == null && !result) {
       previousResult = result;
     }
   }

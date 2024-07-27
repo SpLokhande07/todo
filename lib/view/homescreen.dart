@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo_noorisys/pod/profile_pod.dart';
 import 'package:todo_noorisys/view/task_view.dart';
-
-import '../helper/connection_helper.dart';
-import '../wrapper/connection_wrapper.dart';
 import 'calendar_view.dart';
 import 'profile_view.dart';
 
